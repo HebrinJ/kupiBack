@@ -7,6 +7,6 @@ export class UsersController {
 
     @Get('me')
     async findOne() {
-        return this.usersService.findOne();
+        //return this.usersService.findOne();
     }
 }

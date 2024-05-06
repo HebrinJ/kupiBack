@@ -18,6 +18,11 @@ import { WishesModule } from './wishes/wishes.module';
 import { WishlistsModule } from './wishlists/wishlists.module';
 import { OffersService } from './offers/offers.service';
 import { OffersModule } from './offers/offers.module';
+import { AuthModule } from './auth/auth.module';
+import { HashService } from './hash/hash.service';
+import { AuthController } from './auth/auth.controller';
+import { AuthService } from './auth/auth.service';
+import { Repository } from 'typeorm';
 
 @Module({
   imports: [
@@ -35,8 +40,9 @@ import { OffersModule } from './offers/offers.module';
     WishesModule,
     WishlistsModule,
     OffersModule,
+    AuthModule,
   ],
-  controllers: [AppController, UsersController, WishesController, WishlistsController, OffersController],
-  providers: [AppService, UsersService, WishesService, OffersService],
+  controllers: [AppController, UsersController, WishesController, WishlistsController, OffersController, AuthController],
+  providers: [AppService, UsersService, WishesService, OffersService, HashService, AuthService, Repository<User>],
 })
 export class AppModule {}
