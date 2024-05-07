@@ -10,19 +10,23 @@ class RegisterDto {
     username: string;
 }
 
+class SigninDto {
+    username: string;
+    password: string;
+}
+
 @Controller()
 export class AuthController {
 
     constructor(private authService: AuthService, private userService: UsersService) {}
 
     @Post('signin')
-    signin() {
-
+    signin(@Body() signinDto: SigninDto) {
+        return this.authService.signin(signinDto)
     }
 
     @Post('signup')
-    signup(@Body() registerDto: RegisterDto) {
-        console.log(registerDto)
-        return this.userService.create(registerDto)
+    signup(@Body() registerDto: RegisterDto) {        
+        return this.userService.create(registerDto)        
     }
 }
