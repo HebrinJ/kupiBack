@@ -14,8 +14,6 @@ import { OffersModule } from './offers/offers.module';
 import { AuthModule } from './auth/auth.module';
 import { HashModule } from './hash/hash.module';
 import { JwtModule } from './jwt/jwt.module';
-import { PassportService } from './passport/passport.service';
-import { PassportModule } from './passport/passport.module';
 
 @Module({
   imports: [
@@ -36,9 +34,8 @@ import { PassportModule } from './passport/passport.module';
     AuthModule,
     HashModule,
     JwtModule,
-    PassportModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PassportService],
+  providers: [AppService],
 })
 export class AppModule {}
