@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { HashModule } from 'src/hash/hash.module';
 
-@Module({    
+@Module({
     imports: [TypeOrmModule.forFeature([User]), HashModule],
     providers: [UsersService],
     controllers: [UsersController],

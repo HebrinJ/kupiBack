@@ -13,7 +13,7 @@ import { WishlistsModule } from './wishlists/wishlists.module';
 import { OffersModule } from './offers/offers.module';
 import { AuthModule } from './auth/auth.module';
 import { HashModule } from './hash/hash.module';
-import { JwtModule } from './jwt/jwt.module';
+import { JwtHandlerModule } from './jwt/jwthandler.module';
 
 @Module({
   imports: [
@@ -33,7 +33,7 @@ import { JwtModule } from './jwt/jwt.module';
     OffersModule,
     AuthModule,
     HashModule,
-    JwtModule,
+    JwtHandlerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

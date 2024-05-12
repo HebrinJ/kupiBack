@@ -9,12 +9,9 @@ export class AuthService {
 
     constructor(private hashService: HashService, private userService: UsersService, private jwtService: JwtService) {}
 
-    async validateUser(inputUserData): Promise<User> {
-
-        const { username, password } = inputUserData;
-
-        const user = await this.userService.findUserByName(username);
-
+    async validateUser(username, password): Promise<User> {
+        const user = await this.userService.findUserByName(username);        
+        console.log(user)
         const match = await this.hashService.comparePasswords(password, user.password);
 
         if(match) {
@@ -24,11 +21,10 @@ export class AuthService {
         }
     }
 
-    async signin(inputUserData) {
+    async signin(data) {
 
         return {
-            access_token: this.jwtService.sign(inputUserData)
-        }        
-    }
-    
+            access_token: this.jwtService.sign({ data: data.user, id: data.id})
+        }
+    }    
 }
