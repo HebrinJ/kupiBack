@@ -5,7 +5,7 @@ import { User } from './entities/user.entity';
 import { HashService } from 'src/hash/hash.service';
 
 @Injectable()
-export class UsersService {
+export class UsersService {    
 
     constructor(
         @InjectRepository(User)
@@ -28,6 +28,24 @@ export class UsersService {
         return await this.userRepository.save(user);
     }
 
+    async updateUserProfile(id: number, userData: any): Promise<User> {
+        const user = await this.findById(id);
+        
+        const { username, email, about, avatar, password } = userData;
+
+        if(username) user.username = username;
+        if(email) user.email = email;
+        if(about) user.about = about;
+        if(avatar) user.avatar = avatar;
+
+        if(password) {
+            const hashPassword = await this.hashService.hashPassword(password);
+            user.password = hashPassword;
+        }
+
+        return await this.userRepository.save(user);
+    }
+
     async findUserByName(name: string): Promise<User> {
         const user = await this.userRepository.findOne({
             where: {
@@ -43,8 +61,13 @@ export class UsersService {
         return user;
     }
 
-    updateOne() {}
+    async findUsersByEmail(email: string): Promise<User[]> {
+        const users = await this.userRepository.find({ 
+            where: {
+                email: email,
+            }, 
+        });
 
-    removeOne() {}
-    
+        return users;
+    }    
 }

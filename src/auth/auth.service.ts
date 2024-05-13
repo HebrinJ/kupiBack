@@ -20,10 +20,10 @@ export class AuthService {
         }
     }
 
-    async signin(data) {
-        console.log(data)
+    async signin({ username, id}) {
+        
         return {
-            access_token: this.jwtService.sign({ data: data.user, id: data.id})
+            access_token: this.jwtService.sign({ username, id })
         }
     }    
 }

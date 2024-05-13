@@ -26,4 +26,17 @@ export class WishesService {
 
         return await this.wishRepository.save(wish);
     }
+
+    async findUserWishes(userId: number): Promise<Wish[]> {
+
+        const wishes = await this.wishRepository.find({
+            where: {
+                owner: {
+                    id: userId,
+                },
+            },
+        });
+        
+        return wishes;        
+    }
 }

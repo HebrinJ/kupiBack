@@ -1,11 +1,15 @@
-import { Controller, Get, Headers, Body, UseGuards, Request, Param, Patch, Req } from '@nestjs/common';
+import { Controller, Get, Headers, Body, UseGuards, Request, Param, Patch, Req, Post } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
+import { WishesService } from 'src/wishes/wishes.service';
+import { UserWishesDto } from './dto/user-wishes.dto';
+import { Wish } from 'src/wishes/entities/wish.entity';
+import { User } from './entities/user.entity';
 
 @UseGuards(JwtGuard)
 @Controller('users')
 export class UsersController {
-    constructor(private usersService: UsersService) {}    
+    constructor(private usersService: UsersService, private wishesService: WishesService) {}    
 
     @Get('me')
     async findOne(@Request() req) {
@@ -13,17 +17,32 @@ export class UsersController {
     }
 
     @Get(':username')
-    async findUser(@Param('username') username: string): Promise<any> {
+    async findUserByName(@Param('username') username: string): Promise<User> {
         return this.usersService.findUserByName(username);
     }
 
-    // @Patch('me')
-    // async updateUser(user: User, @Body() updateUserDto: any) {
+    @Get(':username/wishes')
+    async findWishesByUser(@Param('username') username: string): Promise<Wish[]> {
+        const user = await this.usersService.findUserByName(username);
+        const id = user.id;
 
-    // }
+        return this.wishesService.findUserWishes(id);
+    }
+
+    @Post('find')
+    async findUsersByEmail(@Body() body): Promise<User[]> {
+        const email = body.query;
+        
+        return this.usersService.findUsersByEmail(email);
+    }
+
+    @Patch('me')
+    async updateUser(@Request() req, @Body() body): Promise<User> {
+        return this.usersService.updateUserProfile(req.user.id, body);
+    }
 
     @Get('me/wishes')
-    async findUserWishes (@Request() req) {
-        
+    async findUserWishes (@Request() req): Promise<Wish[]> {
+        return this.wishesService.findUserWishes(req.user.id);
     }
 }
