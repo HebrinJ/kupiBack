@@ -1,4 +1,4 @@
-import { Entity, Column, OneToMany, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, OneToMany, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, JoinTable } from 'typeorm';
 import { IsNumber, IsUrl, Length } from 'class-validator'
 import { Offer } from 'src/offers/offer.entity';
 import { User } from 'src/users/entities/user.entity';
@@ -34,12 +34,13 @@ export class Wish {
   @IsNumber({ maxDecimalPlaces: 2 })
   raised: number;
 
-  @ManyToOne(() => User, (user) => user.id)
-  owner: User;
-
   @Column()
   @Length(1, 1024)
   description: string;
+
+  @ManyToOne(() => User, (user) => user.id)
+  @JoinTable()
+  owner: User;
 
   @OneToMany(() => Offer, (offer) => offer.user)
   offers: Offer[];
