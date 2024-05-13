@@ -1,7 +1,7 @@
 import { Entity, Column, OneToMany,  } from 'typeorm';
 import { IsUrl, Length, MaxLength } from 'class-validator'
 import { Content } from 'src/content.entity';
-import { Wish } from 'src/wishes/wish.entity';
+import { Wish } from 'src/wishes/entities/wish.entity';
 
 @Entity()
 export class Wishlist extends Content {

@@ -1,8 +1,8 @@
 import { Entity, Column, OneToMany, OneToOne,  } from 'typeorm';
 import { IsNumber } from 'class-validator'
 import { Content } from 'src/content.entity';
-import { Wish } from 'src/wishes/wish.entity';
-import { User } from 'src/users/user.entity';
+import { Wish } from 'src/wishes/entities/wish.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Entity()
 export class Offer extends Content {

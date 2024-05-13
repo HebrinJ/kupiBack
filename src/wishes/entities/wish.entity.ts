@@ -1,10 +1,19 @@
-import { Entity, Column, OneToMany } from 'typeorm';
+import { Entity, Column, OneToMany, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { IsNumber, IsUrl, Length } from 'class-validator'
-import { Content } from 'src/content.entity';
 import { Offer } from 'src/offers/offer.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Entity()
-export class Wish extends Content {
+export class Wish {
+
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   @Column()
   @Length(1, 250)
@@ -25,8 +34,8 @@ export class Wish extends Content {
   @IsNumber({ maxDecimalPlaces: 2 })
   raised: number;
 
-  @Column()
-  owner: string;
+  @ManyToOne(() => User, (user) => user.id)
+  owner: User;
 
   @Column()
   @Length(1, 1024)

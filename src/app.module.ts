@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './users/user.entity';
+import { User } from './users/entities/user.entity';
 import { Content } from './content.entity';
-import { Wish } from './wishes/wish.entity';
+import { Wish } from './wishes/entities/wish.entity';
 import { Wishlist } from './wishlists/wishlist.entity';
 import { Offer } from './offers/offer.entity';
 import { UsersModule } from './users/users.module';
@@ -13,7 +13,6 @@ import { WishlistsModule } from './wishlists/wishlists.module';
 import { OffersModule } from './offers/offers.module';
 import { AuthModule } from './auth/auth.module';
 import { HashModule } from './hash/hash.module';
-import { JwtHandlerModule } from './jwt/jwthandler.module';
 
 @Module({
   imports: [
@@ -33,7 +32,6 @@ import { JwtHandlerModule } from './jwt/jwthandler.module';
     OffersModule,
     AuthModule,
     HashModule,
-    JwtHandlerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

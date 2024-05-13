@@ -1,13 +1,21 @@
-import { Entity, Column, OneToMany } from 'typeorm';
+import { Entity, Column, OneToMany, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { IsEmail, IsUrl, Length, IsString } from 'class-validator'
-import { Content } from 'src/content.entity';
-import { Wish } from 'src/wishes/wish.entity';
+import { Wish } from 'src/wishes/entities/wish.entity';
 import { Wishlist } from 'src/wishlists/wishlist.entity';
 import { Offer } from 'src/offers/offer.entity';
 import { Exclude } from 'class-transformer';
 
 @Entity()
-export class User extends Content {
+export class User {
+
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   @Column({ unique: true })
   @Length(2, 30)
