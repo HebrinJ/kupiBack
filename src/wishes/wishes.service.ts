@@ -63,15 +63,18 @@ export class WishesService {
         return wish;
     }
 
-    async removeWishById(id: number): Promise<Wish> {
+    async removeWishById(id: number) {
 
-        const wish = this.getWishById(id);
+        // const wish = this.getWishById(id);
         
-        await this.wishRepository.delete({
+        // await this.wishRepository.delete({
+        //     id: id,
+        // })
+
+        // return wish;
+        return await this.wishRepository.delete({
             id: id,
         })
-
-        return wish;
     }
 
     async createWishCopy(wishId: number, userId: number): Promise<Wish> {
