@@ -1,4 +1,4 @@
-import { Entity, Column, OneToMany, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, JoinTable } from 'typeorm';
+import { Entity, Column, OneToMany, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { IsNumber, IsUrl, Length } from 'class-validator'
 import { Offer } from 'src/offers/offer.entity';
 import { User } from 'src/users/entities/user.entity';

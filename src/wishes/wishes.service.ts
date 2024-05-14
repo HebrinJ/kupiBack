@@ -97,7 +97,6 @@ export class WishesService {
         newWish.raised = raised;
         newWish.owner = owner;
 
-        console.log(newWish)
         return await this.wishRepository.save(newWish);
     }
 
@@ -109,5 +108,14 @@ export class WishesService {
         })
 
         return wishes;
+    }
+
+    async raiseUp(sum: number, wishId: number) {
+        const wish = await this.getWishById(wishId);
+
+        const raised = wish.raised + sum;
+        // TODO сделать проверку на превышение суммы
+
+        this.wishRepository.update({ id: wishId }, { raised: raised });
     }
 }
