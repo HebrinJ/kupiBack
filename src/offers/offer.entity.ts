@@ -1,16 +1,24 @@
-import { Entity, Column, OneToMany, OneToOne,  } from 'typeorm';
+import { Entity, Column, OneToMany, OneToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne,  } from 'typeorm';
 import { IsNumber } from 'class-validator'
-import { Content } from 'src/content.entity';
 import { Wish } from 'src/wishes/entities/wish.entity';
 import { User } from 'src/users/entities/user.entity';
 
 @Entity()
-export class Offer extends Content {
+export class Offer {
 
-  @OneToMany(() => User, (user) => user.id) 
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @ManyToOne(() => User, (user) => user.id) 
   user: User;
 
-  @OneToOne(() => Wish, (wish) => wish.id)
+  @ManyToOne(() => Wish, (wish) => wish.id)
   item: Wish;
 
   @Column()

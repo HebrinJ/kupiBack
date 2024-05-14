@@ -19,6 +19,11 @@ export class WishesController {
         return this.wishService.getLastWishes();
     }
 
+    @Get('top')
+    async getTopWish() {
+        return this.wishService.getTopWishes();
+    }
+
     @Get(':id')
     async getWishById(@Param('id') id: number) {
         return this.wishService.getWishById(id);

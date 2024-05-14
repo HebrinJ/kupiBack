@@ -39,7 +39,6 @@ export class Wish {
   description: string;
 
   @ManyToOne(() => User, (user) => user.id)
-  @JoinTable()
   owner: User;
 
   @OneToMany(() => Offer, (offer) => offer.user)

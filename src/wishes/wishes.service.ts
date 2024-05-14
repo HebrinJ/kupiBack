@@ -56,7 +56,8 @@ export class WishesService {
         const wish = await this.wishRepository.findOne({
             where: {
                 id: id,
-            }
+            },
+            relations: ['owner', 'offers', 'offers.user'],
         })
 
         return wish;
@@ -73,17 +74,40 @@ export class WishesService {
         return wish;
     }
 
-    async createWishCopy(id: number, userId: number): Promise<Wish> {
+    async createWishCopy(wishId: number, userId: number): Promise<Wish> {
 
-        const wish = await this.getWishById(id);
+        const wish = await this.getWishById(wishId);
+        const curCopied = wish.copied + 1;
+        this.wishRepository.update({ id: wishId }, { copied: curCopied });
         
         const copied = 0;
         const offers = [];
         const raised = 1;
         const owner = await this.usersService.findById(userId);
         
-        const newWish = { ...wish, copied, offers, raised, owner };
+        //const newWish = { ...wish, copied, offers, raised, owner };
+        const newWish = new Wish();
+        newWish.copied = copied;
+        newWish.description = wish.description;
+        newWish.image = wish.image;
+        newWish.link = wish.link;
+        newWish.name = wish.name;
+        newWish.offers = offers;
+        newWish.price = wish.price;
+        newWish.raised = raised;
+        newWish.owner = owner;
 
+        console.log(newWish)
         return await this.wishRepository.save(newWish);
+    }
+
+    async getTopWishes(): Promise<Wish[]> {
+        const wishes = await this.wishRepository.find({
+            where: {},
+            order: { copied: 'DESC' },
+            take: 20,
+        })
+
+        return wishes;
     }
 }
