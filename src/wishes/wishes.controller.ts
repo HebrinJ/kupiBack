@@ -35,7 +35,7 @@ export class WishesController {
     }
 
     @Delete(':id')
-    async removeWishById(@Param('id') id: number): Promise<Wish> {
+    async removeWishById(@Param('id') id: number) {
         return this.wishService.removeWishById(id);
     }
     

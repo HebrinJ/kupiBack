@@ -17,8 +17,14 @@ export class OffersService {
 
     async makeOffer(offerData, userId: number) {
 
+        const wish = await this.wishesService.getWishById(offerData.itemId);                
+        
+        if((wish.raised + offerData.amount) > wish.price) {
+            console.log('Слишком большая сумма')
+            return {};
+        }
+
         const user = await this.usersService.findById(userId);
-        const wish = await this.wishesService.getWishById(offerData.itemId);
         await this.wishesService.raiseUp(offerData.amount, wish.id);
 
         const offer = new Offer();

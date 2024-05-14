@@ -80,25 +80,31 @@ export class WishesService {
     async createWishCopy(wishId: number, userId: number): Promise<Wish> {
 
         const wish = await this.getWishById(wishId);
-        const curCopied = wish.copied + 1;
-        this.wishRepository.update({ id: wishId }, { copied: curCopied });
+        const currCopied = wish.copied + 1;
+        this.wishRepository.update({ id: wishId }, { copied: currCopied });
         
-        const copied = 0;
-        const offers = [];
-        const raised = 1;
-        const owner = await this.usersService.findById(userId);
+        // const copied = 0;
+        // const offers = [];
+        // const raised = 1;
+        // const owner = await this.usersService.findById(userId);
         
-        //const newWish = { ...wish, copied, offers, raised, owner };
+        // const newWish = new Wish();
+        // newWish.copied = copied;
+        // newWish.description = wish.description;
+        // newWish.image = wish.image;
+        // newWish.link = wish.link;
+        // newWish.name = wish.name;
+        // newWish.offers = offers;
+        // newWish.price = wish.price;
+        // newWish.raised = raised;
+        // newWish.owner = owner;
+
         const newWish = new Wish();
-        newWish.copied = copied;
-        newWish.description = wish.description;
-        newWish.image = wish.image;
-        newWish.link = wish.link;
-        newWish.name = wish.name;
-        newWish.offers = offers;
-        newWish.price = wish.price;
-        newWish.raised = raised;
-        newWish.owner = owner;
+        Object.assign(newWish, wish);
+        newWish.copied = 0;
+        newWish.raised = 1;
+        newWish.offers = [];
+        newWish.owner = await this.usersService.findById(userId);
 
         return await this.wishRepository.save(newWish);
     }
@@ -114,10 +120,14 @@ export class WishesService {
     }
 
     async raiseUp(sum: number, wishId: number) {
-        const wish = await this.getWishById(wishId);
+        const wish = await this.getWishById(wishId);        
+
+        // if((wish.raised + sum) > wish.price) {
+        //     console.log('Слишком большая сумма')
+        //     return;
+        // }
 
         const raised = wish.raised + sum;
-        // TODO сделать проверку на превышение суммы
 
         this.wishRepository.update({ id: wishId }, { raised: raised });
     }
