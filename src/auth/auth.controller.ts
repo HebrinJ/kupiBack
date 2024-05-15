@@ -6,6 +6,7 @@ import { CreateUserDto } from '../users/dto/create-user.dto';
 import { SignupUserResponseDto } from './dto/signup-user-response.dto';
 import { User } from 'src/users/entities/user.entity';
 import { plainToInstance } from 'class-transformer';
+import { SigninUserResponseDto } from './dto/signin-user-response.dto';
 
 @Controller()
 export class AuthController {
@@ -14,7 +15,7 @@ export class AuthController {
 
     @UseGuards(LocalAuthGuard)
     @Post('signin')
-    signin(@Request() req) {
+    signin(@Request() req): Promise<SigninUserResponseDto> {
         return this.authService.signin({ username: req.user.username, id: req.user.id })
     }
 
