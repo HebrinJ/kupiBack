@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { HashService } from 'src/hash/hash.service';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UsersService {    
@@ -13,19 +14,30 @@ export class UsersService {
         private hashService: HashService,
       ) {}
 
-    async create(userData: any): Promise<User> {
-        const { username, email, about, avatar, password } = userData;
+    async createUser(userData: CreateUserDto): Promise<User> {
+
+        if(await this.checkUserExists(userData.username, userData.email)) {  
+            throw new HttpException('Пользователь с таким email или username уже зарегистрирован', HttpStatus.CONFLICT);
+        }
         
-        const hashPassword = await this.hashService.hashPassword(password);
+        const hashPassword = await this.hashService.hashPassword(userData.password);
 
-        const user = new User();
-        user.username = username;
-        user.email = email;
-        user.about = about;
-        user.avatar = avatar;
-        user.password = hashPassword;
+        const newUser = { ...userData, password: hashPassword }
 
-        return await this.userRepository.save(user);
+        return await this.userRepository.save(newUser);
+    }
+
+    async checkUserExists(username: string, email: string): Promise<boolean> {
+
+        const userByName = await this.findUserByName(username);
+        
+        if(userByName) return true;
+
+        const usersByEmail = await this.findUsersByEmail(email);
+        
+        if(usersByEmail.length > 0) return true;
+        
+        return false;        
     }
 
     async updateUserProfile(id: number, userData: any): Promise<User> {

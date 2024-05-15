@@ -3,6 +3,9 @@ import { AuthService } from './auth.service';
 import { UsersService } from 'src/users/users.service';
 import { LocalAuthGuard } from './guards/auth.guard';
 import { CreateUserDto } from '../users/dto/create-user.dto';
+import { SignupUserResponseDto } from './dto/signup-user-response.dto';
+import { User } from 'src/users/entities/user.entity';
+import { plainToInstance } from 'class-transformer';
 
 @Controller()
 export class AuthController {
@@ -16,7 +19,10 @@ export class AuthController {
     }
 
     @Post('signup')
-    signup(@Body() createUserDto: CreateUserDto) {
-        return this.userService.create(createUserDto)        
+    async signup(@Body() createUserDto: CreateUserDto): Promise<SignupUserResponseDto> {            
+        const user: User = await this.userService.createUser(createUserDto);
+        
+        const userDto = plainToInstance(SignupUserResponseDto, user);
+        return userDto;        
     }
 }
