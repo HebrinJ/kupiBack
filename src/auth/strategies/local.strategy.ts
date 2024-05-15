@@ -1,6 +1,6 @@
 import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { AuthService } from '../auth.service';
 import { User } from 'src/users/entities/user.entity';
 
@@ -20,9 +20,9 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     const user: User = await this.authService.validateUser(username, password);
 
     if (!user) {
-      throw new UnauthorizedException('Некорректная пара логин и пароль');
+      throw new HttpException('Некорректная пара логин и пароль', HttpStatus.UNAUTHORIZED)
     }
-    
+
     return { username: user.username, id: user.id }
   }
 }

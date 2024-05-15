@@ -35,8 +35,7 @@ export class User {
 
   @Column()
   @IsString()
-  // Проверить работоспопобсность регистрации при эксклюде
-  //@Exclude()
+  @Exclude()
   password: string;
 
   @OneToMany(() => Wish, (wish) => wish.owner)

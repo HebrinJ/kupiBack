@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsNumber, IsString, IsUrl, Length } from "class-validator";
+import { IsEmail, IsNotEmpty, IsNumber, IsString, Length } from "class-validator";
 
 export class SignupUserResponseDto {
     
@@ -17,7 +17,6 @@ export class SignupUserResponseDto {
     about: string;
 
     @IsString()
-    @IsUrl()
     avatar: string;
 
     @IsEmail()

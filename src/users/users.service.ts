@@ -22,9 +22,14 @@ export class UsersService {
         
         const hashPassword = await this.hashService.hashPassword(userData.password);
 
-        const newUser = { ...userData, password: hashPassword }
+        const newUser = new User();
+        Object.assign(newUser, userData, { password: hashPassword });
+        //newUser = { ...userData, password: hashPassword }
 
         return await this.userRepository.save(newUser);
+        //const result = await this.userRepository.save(newUser);
+        
+        //return await this.findUserByName(userData.username);
     }
 
     async checkUserExists(username: string, email: string): Promise<boolean> {

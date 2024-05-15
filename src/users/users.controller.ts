@@ -4,15 +4,22 @@ import { JwtGuard } from 'src/auth/guards/jwt.guard';
 import { WishesService } from 'src/wishes/wishes.service';
 import { Wish } from 'src/wishes/entities/wish.entity';
 import { User } from './entities/user.entity';
+import { UserProfileResponseDto } from './dto/user-profile-response.dto';
+import { instanceToPlain, plainToInstance } from 'class-transformer';
 
 @UseGuards(JwtGuard)
 @Controller('users')
 export class UsersController {
-    constructor(private usersService: UsersService, private wishesService: WishesService) {}    
+    constructor(private usersService: UsersService, private wishesService: WishesService) {}
 
     @Get('me')
-    async findOne(@Request() req) {
-        return this.usersService.findById(req.user.id);
+    async findOne(@Request() req): Promise<UserProfileResponseDto> {
+        const user: User = await this.usersService.findById(req.user.id);
+        
+        const responsePlain = instanceToPlain(user);
+        const responseDto = plainToInstance(UserProfileResponseDto, responsePlain);
+        
+        return responseDto;
     }    
 
     @Post('find')
