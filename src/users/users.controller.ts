@@ -5,7 +5,11 @@ import { WishesService } from 'src/wishes/wishes.service';
 import { Wish } from 'src/wishes/entities/wish.entity';
 import { User } from './entities/user.entity';
 import { UserProfileResponseDto } from './dto/user-profile-response.dto';
-import { instanceToPlain, plainToInstance } from 'class-transformer';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UserPublicProfileDto } from './dto/user-public-profile.dto';
+import { entityToDtoTransform } from 'src/utils/entityToDtoTransform';
+import { UserWishesDto } from './dto/user-wishes.dto';
+import { FindUserDto } from './dto/find-users.dto';
 
 @UseGuards(JwtGuard)
 @Controller('users')
@@ -15,23 +19,19 @@ export class UsersController {
     @Get('me')
     async findOne(@Request() req): Promise<UserProfileResponseDto> {
         const user: User = await this.usersService.findById(req.user.id);
-        
-        const responsePlain = instanceToPlain(user);
-        const responseDto = plainToInstance(UserProfileResponseDto, responsePlain);
-        
-        return responseDto;
+        return entityToDtoTransform<User, UserProfileResponseDto>(user, UserProfileResponseDto);        
     }    
 
     @Post('find')
-    async findUsersByEmail(@Body() body): Promise<User[]> {
-        const email = body.query;
-        
-        return this.usersService.findUsersByEmail(email);
+    async findUsersByEmail(@Body() findUserDto: FindUserDto): Promise<UserProfileResponseDto[]> {
+        const users: User[] = await this.usersService.findUsersByQuery(findUserDto.query);
+        return entityToDtoTransform<User[], UserProfileResponseDto[]>(users, UserProfileResponseDto);
     }
 
     @Patch('me')
-    async updateUser(@Request() req, @Body() body): Promise<User> {
-        return this.usersService.updateUserProfile(req.user.id, body);
+    async updateUser(@Request() req, @Body() updateUserDto: UpdateUserDto): Promise<UserProfileResponseDto> {
+        const user: User = await this.usersService.updateUserProfile(req.user.id, updateUserDto);
+        return entityToDtoTransform<User, UserProfileResponseDto>(user, UserProfileResponseDto);        
     }
 
     @Get('me/wishes')
@@ -40,15 +40,17 @@ export class UsersController {
     }
 
     @Get(':username')
-    async findUserByName(@Param('username') username: string): Promise<User> {
-        return this.usersService.findUserByName(username);
+    async findUserByName(@Param('username') username: string): Promise<UserPublicProfileDto> {
+        const user: User = await this.usersService.findUserByName(username);
+        return entityToDtoTransform<User, UserPublicProfileDto>(user, UserPublicProfileDto);
     }
 
     @Get(':username/wishes')
-    async findWishesByUser(@Param('username') username: string): Promise<Wish[]> {
+    async findWishesByUser(@Param('username') username: string): Promise<UserWishesDto> {
         const user = await this.usersService.findUserByName(username);
         const id = user.id;
 
-        return this.wishesService.findUserWishes(id);
+        const userWishes = await this.wishesService.findUserWishes(id);
+        return entityToDtoTransform<Wish[], UserWishesDto>(userWishes, UserWishesDto);
     }
 }

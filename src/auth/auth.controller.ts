@@ -7,6 +7,7 @@ import { SignupUserResponseDto } from './dto/signup-user-response.dto';
 import { User } from 'src/users/entities/user.entity';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { SigninUserResponseDto } from './dto/signin-user-response.dto';
+import { entityToDtoTransform } from 'src/utils/entityToDtoTransform';
 
 @Controller()
 export class AuthController {
@@ -23,9 +24,6 @@ export class AuthController {
     async signup(@Body() createUserDto: CreateUserDto): Promise<SignupUserResponseDto> {            
         const user: User = await this.userService.createUser(createUserDto);
         
-        const responsePlain = instanceToPlain(user);
-        const userDto = plainToInstance(SignupUserResponseDto, responsePlain);
-
-        return userDto;
+        return entityToDtoTransform<User, SignupUserResponseDto>(user, SignupUserResponseDto)
     }
 }

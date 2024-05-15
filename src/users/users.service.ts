@@ -24,12 +24,8 @@ export class UsersService {
 
         const newUser = new User();
         Object.assign(newUser, userData, { password: hashPassword });
-        //newUser = { ...userData, password: hashPassword }
 
         return await this.userRepository.save(newUser);
-        //const result = await this.userRepository.save(newUser);
-        
-        //return await this.findUserByName(userData.username);
     }
 
     async checkUserExists(username: string, email: string): Promise<boolean> {
@@ -86,5 +82,17 @@ export class UsersService {
         });
 
         return users;
-    }    
+    }
+
+    async findUsersByQuery(queryString: string): Promise<User[]> {
+        const isEmail = queryString.includes('@');
+
+        if(isEmail) {
+            return await this.findUsersByEmail(queryString);
+        } else {
+            const users: User[] = new Array<User>;
+            users.push(await this.findUserByName(queryString))
+            return users;
+        }
+    }
 }
