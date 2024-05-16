@@ -1,6 +1,6 @@
 import { Entity, Column, OneToMany, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { IsNumber, IsUrl, Length } from 'class-validator'
-import { Offer } from 'src/offers/offer.entity';
+import { Offer } from 'src/offers/entities/offer.entity';
 import { User } from 'src/users/entities/user.entity';
 
 @Entity()
@@ -38,7 +38,7 @@ export class Wish {
   @Length(1, 1024)
   description: string;
 
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.wishes)
   owner: User;
 
   @OneToMany(() => Offer, (offer) => offer.user)

@@ -1,8 +1,8 @@
 import { Entity, Column, OneToMany, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { IsEmail, IsUrl, Length, IsString } from 'class-validator'
 import { Wish } from 'src/wishes/entities/wish.entity';
-import { Wishlist } from 'src/wishlists/wishlist.entity';
-import { Offer } from 'src/offers/offer.entity';
+import { Wishlist } from 'src/wishlists/entities/wishlist.entity';
+import { Offer } from 'src/offers/entities/offer.entity';
 import { Exclude } from 'class-transformer';
 
 @Entity()
@@ -33,7 +33,7 @@ export class User {
   @IsEmail()
   email: string;
 
-  @Column()
+  @Column({ select: false })
   @IsString()
   @Exclude()
   password: string;
@@ -44,6 +44,6 @@ export class User {
   @OneToMany(() => Offer, (offer) => offer.user)
   offers: Offer[];
 
-  @OneToMany(() => Wishlist, (wishlist) => wishlist.name)
+  @OneToMany(() => Wishlist, (wishlist) => wishlist.owner)
   wishlist: Wishlist[];
 }

@@ -1,5 +1,5 @@
 import { IsInt, IsNumber, IsString, Length, Min } from "class-validator";
-import { Offer } from "src/offers/offer.entity";
+import { Offer } from "src/offers/entities/offer.entity";
 
 export class UserWishesDto {
 

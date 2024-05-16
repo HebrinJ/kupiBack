@@ -1,7 +1,6 @@
-import { Entity, Column, OneToMany, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne,  } from 'typeorm';
-import { IsUrl, Length, MaxLength } from 'class-validator'
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany } from 'typeorm';
+import { IsUrl, Length } from 'class-validator'
 import { Wish } from 'src/wishes/entities/wish.entity';
-import { UserPublicProfileDto } from 'src/users/dto/user-public-profile.dto';
 import { User } from 'src/users/entities/user.entity';
 
 @Entity()
@@ -27,6 +26,6 @@ export class Wishlist {
   @ManyToOne(() => User, (user) => user.id)
   owner: User;
 
-  @OneToMany(() => Wish, (wish) => wish.owner)
+  @OneToMany(() => Wish, (wish) => wish.id)
   items: Wish[];
 }

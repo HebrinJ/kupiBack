@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from 'src/users/users.service';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
+import { CreateWishDto } from './dto/create-wish.dto';
 
 @UseGuards(JwtGuard)
 @Injectable()
@@ -15,15 +16,18 @@ export class WishesService {
         private usersService: UsersService,
       ) {}
 
-    async createPresent(req: any, presentData): Promise<Wish> {
+    async createWish(userId: number, wishData: CreateWishDto): Promise<Wish> {
 
-        const copied = 0;
-        const offers = [];
-        const raised = 1;
-        const owner = await this.usersService.findById(req.user.id)
+        const owner = await this.usersService.findById(userId);
+
+        const wish = this.wishRepository.create({
+            ...wishData,
+            copied: 0,
+            offers: [],
+            raised: 0,
+            owner,
+        })
         
-        const wish = { ...presentData, copied, offers, raised, owner };
-
         return await this.wishRepository.save(wish);
     }
 
@@ -51,8 +55,7 @@ export class WishesService {
     }
 
     async getWishById(id: number): Promise<Wish> {
-        console.log('Its id')
-        console.log(id)
+
         const wish = await this.wishRepository.findOne({
             where: {
                 id: id,
@@ -64,49 +67,25 @@ export class WishesService {
     }
 
     async removeWishById(id: number) {
-
-        // const wish = this.getWishById(id);
-        
-        // await this.wishRepository.delete({
-        //     id: id,
-        // })
-
-        // return wish;
-        return await this.wishRepository.delete({
+        await this.wishRepository.delete({
             id: id,
         })
     }
 
     async createWishCopy(wishId: number, userId: number): Promise<Wish> {
 
-        const wish = await this.getWishById(wishId);
-        const currCopied = wish.copied + 1;
-        this.wishRepository.update({ id: wishId }, { copied: currCopied });
-        
-        // const copied = 0;
-        // const offers = [];
-        // const raised = 1;
-        // const owner = await this.usersService.findById(userId);
-        
-        // const newWish = new Wish();
-        // newWish.copied = copied;
-        // newWish.description = wish.description;
-        // newWish.image = wish.image;
-        // newWish.link = wish.link;
-        // newWish.name = wish.name;
-        // newWish.offers = offers;
-        // newWish.price = wish.price;
-        // newWish.raised = raised;
-        // newWish.owner = owner;
+        const currentWish = await this.getWishById(wishId);
+        const currCopied = currentWish.copied + 1;
+        await this.wishRepository.update({ id: wishId }, { copied: currCopied });        
 
-        const newWish = new Wish();
-        Object.assign(newWish, wish);
-        newWish.copied = 0;
-        newWish.raised = 1;
-        newWish.offers = [];
-        newWish.owner = await this.usersService.findById(userId);
-
-        return await this.wishRepository.save(newWish);
+        const newWishData: CreateWishDto = {
+            name: currentWish.name,
+            link: currentWish.link,
+            image: currentWish.image,
+            price: currentWish.price,
+            description: currentWish.description,
+        }
+        return await this.createWish(userId, { ...newWishData })
     }
 
     async getTopWishes(): Promise<Wish[]> {
@@ -119,13 +98,8 @@ export class WishesService {
         return wishes;
     }
 
-    async raiseUp(sum: number, wishId: number) {
-        const wish = await this.getWishById(wishId);        
-
-        // if((wish.raised + sum) > wish.price) {
-        //     console.log('Слишком большая сумма')
-        //     return;
-        // }
+    async wishRaiseUp(sum: number, wishId: number) {
+        const wish = await this.getWishById(wishId);
 
         const raised = wish.raised + sum;
 

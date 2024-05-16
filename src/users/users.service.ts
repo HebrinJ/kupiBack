@@ -68,6 +68,25 @@ export class UsersService {
         return user;
     }
 
+    async findUserForComparePassword(name: string): Promise<User> {
+        const user = await this.userRepository.findOne({
+            where: {
+                username: name,
+            },
+            select: {
+                id: true,
+                username: true,
+                about: true,
+                avatar: true,
+                email: true,
+                createdAt: true,
+                updatedAt: true,
+                password: true,
+            }
+        });
+        return user;        
+    }
+
     async findById(id: number): Promise<User> {
         const user = await this.userRepository.findOneBy({ id });
 

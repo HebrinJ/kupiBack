@@ -10,7 +10,7 @@ export class AuthService {
     constructor(private hashService: HashService, private userService: UsersService, private jwtService: JwtService) {}
 
     async validateUser(username: string, password: string): Promise<User> {
-        const user = await this.userService.findUserByName(username);
+        const user = await this.userService.findUserForComparePassword(username);
         
         if(user) {
             const match = await this.hashService.comparePasswords(password, user.password);

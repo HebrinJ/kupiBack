@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Wishlist } from './wishlist.entity';
+import { Wishlist } from './entities/wishlist.entity';
 import { Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
-import { UserPublicProfileDto } from 'src/users/dto/user-public-profile.dto';
+import { CreateWishlistDto } from './dto/create-wishlist.dto';
 
 @Injectable()
 export class WishlistsService {    
@@ -14,58 +14,31 @@ export class WishlistsService {
         private usersService: UsersService,
     ) {}
 
-    async getWishlist(userId) {
-        const wishlist = await this.wishlistRepository.find({
-            where: {
-                owner: {
-                    id: userId,
-                }
-            }
-        })
-
-        return wishlist;
+    async getWishlists() {        
+        return await this.wishlistRepository.find();
     }
 
-    async createWishlist(wishlistData, userId) {
-        const wishlist = new Wishlist();
+    async createWishlist(wishlistData: CreateWishlistDto, userId: number): Promise<Wishlist> {
+
         const user = await this.usersService.findById(userId);
 
-        // const responseUser = new UserPublicProfileDto();
-        // responseUser.username = user.username;
-        // responseUser.about = user.about;
-        // responseUser.id = user.id;
-        // responseUser.avatar = user.avatar;
-        // responseUser.createdAt = user.createdAt;
-        // responseUser.updatedAt = user.updatedAt;
+        const wishlist = this.wishlistRepository.create({
+            ...wishlistData,
+            owner: user,
+        })
 
-        wishlist.name = wishlistData.name;
-        wishlist.image = wishlistData.image;
-        wishlist.owner = user;
-        wishlist.items = wishlistData.itemsId;
-
-        return this.wishlistRepository.save(wishlist);
+        return await this.wishlistRepository.save(wishlist);
     }
 
-    async getWishlistById(wishlistId: number) {
+    async getWishlistById(wishlistId: number): Promise<Wishlist> {
 
-        const wishlist = await this.wishlistRepository.find({
+        const wishlist = await this.wishlistRepository.findOne({
             where: {
                 id: wishlistId,
             }
         })
 
         return wishlist;
-    }
-
-    async updateWishlist(wishlistId: number, wishlistData) {
-
-        const updatedWishlist = await this.wishlistRepository.update({ id: wishlistId }, { 
-            name: wishlistData.name,
-            image: wishlistData.image,
-            items: wishlistData.itemsId,
-        })
-
-        return updatedWishlist;
     }
 
     async deleteWishlist(wishlistId: number) {

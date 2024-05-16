@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post, Request, UseGuards } from '
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
 import { WishesService } from './wishes.service';
 import { Wish } from './entities/wish.entity';
+import { CreateWishDto } from './dto/create-wish.dto';
 
 @UseGuards(JwtGuard)
 @Controller('wishes')
@@ -10,33 +11,34 @@ export class WishesController {
     constructor(private wishService: WishesService) {}
 
     @Post()
-    async createWish(@Request() req, @Body() body) {
-        return this.wishService.createPresent(req, body);
+    createWish(@Request() req, @Body() createWishDto: CreateWishDto): object {
+        this.wishService.createWish(req.user.id, createWishDto);
+        return {};
     }
 
     @Get('last')
-    async getLastWish() {
-        return this.wishService.getLastWishes();
+    async getLastWish(): Promise<Wish[]> {
+        return await this.wishService.getLastWishes();
     }
 
     @Get('top')
-    async getTopWish() {
+    async getTopWish(): Promise<Wish[]> {
         return this.wishService.getTopWishes();
     }
 
     @Get(':id')
-    async getWishById(@Param('id') id: number) {
+    async getWishById(@Param('id') id: number): Promise<Wish> {
         return this.wishService.getWishById(id);
     }
 
     @Post(':id/copy')
-    async getWishCopy(@Param('id') id: number, @Request() req) {
-        return this.wishService.createWishCopy(id, req.user.id);
+    async getWishCopy(@Param('id') wishId: number, @Request() req): Promise<Wish> {
+        return this.wishService.createWishCopy(wishId, req.user.id);
     }
 
     @Delete(':id')
     async removeWishById(@Param('id') id: number) {
-        return this.wishService.removeWishById(id);
+        await this.wishService.removeWishById(id);
     }
     
 }
