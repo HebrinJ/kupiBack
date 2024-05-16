@@ -12,18 +12,39 @@ import { WishlistsModule } from './wishlists/wishlists.module';
 import { OffersModule } from './offers/offers.module';
 import { AuthModule } from './auth/auth.module';
 import { HashModule } from './hash/hash.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import config from './config/config';
+
+//const { DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME } = process.env;
+
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'student',
-      password: 'student',
-      database: 'kupipodariday',
-      entities: [User, Wish, Wishlist, Offer],
-      synchronize: true,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [config],
+    }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get('database.host'),
+        port: configService.get('database.port'),
+        username: configService.get('database.user'),
+        password: configService.get('database.password'),
+        database: configService.get('database.name'),
+        entities: [User, Wish, Wishlist, Offer],
+        synchronize: true,
+      }),
+      //type: 'postgres',
+      // host: DB_HOST,
+      // port: +DB_PORT,
+      // username: DB_USER,
+      // password: 'student',
+      // database: DB_NAME,
+      // entities: [User, Wish, Wishlist, Offer],
+      // synchronize: true,
     }),
     UsersModule,
     WishesModule,

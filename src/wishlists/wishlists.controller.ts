@@ -3,6 +3,7 @@ import { JwtGuard } from 'src/auth/guards/jwt.guard';
 import { WishlistsService } from './wishlists.service';
 import { Wishlist } from './entities/wishlist.entity';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
+import { Wish } from 'src/wishes/entities/wish.entity';
 
 @UseGuards(JwtGuard)
 @Controller('wishlistlists')
@@ -21,8 +22,8 @@ export class WishlistsController {
     }
 
     @Get(':id')
-    async getWishlistById(@Param('id') wishlistId: number): Promise<Wishlist> {
-        return this.wishlistService.getWishlistById(wishlistId);
+    async getWishlistById(@Param('id') wishlistId: number): Promise<Wish[]> {
+        return this.wishlistService.getWishlistItems(wishlistId);
     }
 
     @Delete(':id')

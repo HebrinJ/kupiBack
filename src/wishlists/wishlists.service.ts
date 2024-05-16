@@ -4,6 +4,8 @@ import { Wishlist } from './entities/wishlist.entity';
 import { Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
+import { Wish } from 'src/wishes/entities/wish.entity';
+import { WishesService } from 'src/wishes/wishes.service';
 
 @Injectable()
 export class WishlistsService {    
@@ -12,6 +14,7 @@ export class WishlistsService {
         @InjectRepository(Wishlist)
         private wishlistRepository: Repository<Wishlist>,
         private usersService: UsersService,
+        private wishService: WishesService,
     ) {}
 
     async getWishlists() {        
@@ -22,8 +25,16 @@ export class WishlistsService {
 
         const user = await this.usersService.findById(userId);
 
+        const promisses = wishlistData.itemsId.map(async (id) => {
+            const wish = await this.wishService.getWishById(id);
+            return wish;
+        });
+            
+        const items = await Promise.all(promisses);
+
         const wishlist = this.wishlistRepository.create({
             ...wishlistData,
+            items: items,
             owner: user,
         })
 
@@ -45,5 +56,17 @@ export class WishlistsService {
         return await this.wishlistRepository.delete({
             id: wishlistId,
         })
+    }
+
+    async getWishlistItems(wishlistId: number): Promise<Wish[]> {
+
+        const wishes = await this.wishlistRepository.findOne({
+            where: {
+                id: wishlistId,
+            },
+            relations: ['items'],
+        })
+        
+        return wishes.items;
     }
 }
